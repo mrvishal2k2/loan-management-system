@@ -1,0 +1,23 @@
+eureka run, identityservice run, demo(deepu code) run, 
+cloudgateway run
+
+http://localhost:8080/identity-service/auth/login
+{
+    "username": "vishu",
+    "password": "yourPassword"
+
+}
+
+/register 
+{
+    "username": "vishu",
+    "email": "vishu@example.com",
+    "password": "yourPassword",
+    "role": "user"
+}
+
+
+http://localhost:9898/auth/validate?token=<token> 
+
+
+

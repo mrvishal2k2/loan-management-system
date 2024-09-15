@@ -1,0 +1,758 @@
+{
+	"info": {
+		"_postman_id": "9b1a0d8e-324c-4e5a-a4f6-8c7e43690d55",
+		"name": "Banking & Loan Microservices Platform",
+		"description": "Comprehensive API collection for the Spring Boot Microservices Ecosystem including Eureka Discovery, API Gateway with JWT Role-Based Access Control, Identity, Customer, Loan, Payment, Notification, and Report Services.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "01. Authentication & Identity Service",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"vishu\",\n    \"email\": \"vishu@example.com\",\n    \"password\": \"yourPassword\",\n    \"role\": \"user\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/identity-service/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"identity-service",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login (Get JWT Token)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.token) {",
+									"    pm.environment.set(\"jwt_token\", jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"vishu\",\n    \"password\": \"yourPassword\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/identity-service/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"identity-service",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Validate Token",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/identity-service/auth/validate?token={{jwt_token}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"identity-service",
+								"auth",
+								"validate"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "02. Customer Service",
+			"item": [
+				{
+					"name": "Create Customer",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Vishal R\",\n    \"email\": \"vishal@example.com\",\n    \"phone\": \"9876543210\",\n    \"address\": \"Bangalore, India\",\n    \"kycStatus\": \"PENDING\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/customer-service/api/customers",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"customer-service",
+								"api",
+								"customers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Customer by ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/customer-service/api/customers/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"customer-service",
+								"api",
+								"customers",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Customer KYC (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"kycStatus\": \"VERIFIED\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/customer-service/api/customers/update/kyc/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"customer-service",
+								"api",
+								"customers",
+								"update",
+								"kyc",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Customer Details",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Vishal R\",\n    \"phone\": \"9876543211\",\n    \"address\": \"Bengaluru, Karnataka\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/customer-service/api/customers/update/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"customer-service",
+								"api",
+								"customers",
+								"update",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Customer",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/customer-service/api/customers/delete/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"customer-service",
+								"api",
+								"customers",
+								"delete",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "03. Loan Service",
+			"item": [
+				{
+					"name": "Create Loan Type (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"typeName\": \"Home Loan\",\n    \"interestRate\": 8.5,\n    \"maxTermMonths\": 240\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/loan-service/loan/type",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"loan-service",
+								"loan",
+								"type"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Loan Types",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/loan-service/loan/type",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"loan-service",
+								"loan",
+								"type"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Submit Loan Application",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"customerId\": 1,\n    \"loanTypeId\": 1,\n    \"amount\": 500000,\n    \"tenureMonths\": 60\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/loan-service/loan/application",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"loan-service",
+								"loan",
+								"application"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Loan Application by ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/loan-service/loan/application/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"loan-service",
+								"loan",
+								"application",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Applications by User ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/loan-service/loan/application/user/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"loan-service",
+								"loan",
+								"application",
+								"user",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Loan Application Status (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 1,\n    \"status\": \"APPROVED\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/loan-service/loan/application/status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"loan-service",
+								"loan",
+								"application",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Evaluate Loan Approval (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/loan-service/loan/approval/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"loan-service",
+								"loan",
+								"approval",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "04. Payment Service",
+			"item": [
+				{
+					"name": "Make Loan Payment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"loanApplicationId\": 1,\n    \"amount\": 15000,\n    \"paymentType\": \"EMI\",\n    \"paymentStatus\": \"SUCCESS\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/payment-service/api/payment",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"payment-service",
+								"api",
+								"payment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Payment Status by ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/payment-service/api/payment/status/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"payment-service",
+								"api",
+								"payment",
+								"status",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Payments (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/payment-service/api/payment",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"payment-service",
+								"api",
+								"payment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Payments by Loan ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/payment-service/api/payment/loan/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"payment-service",
+								"api",
+								"payment",
+								"loan",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "05. Notification Service",
+			"item": [
+				{
+					"name": "Send Email Notification",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"recipient\": \"customer@example.com\",\n    \"msgBody\": \"Your loan payment of Rs. 15,000 has been received successfully.\",\n    \"subject\": \"Loan Payment Confirmation\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/notification-service/notify/send-msg",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"notification-service",
+								"notify",
+								"send-msg"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "06. Report Service",
+			"item": [
+				{
+					"name": "Generate Customer Consolidated Report",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/report-service/report/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"report-service",
+								"report",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "jwt_token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
